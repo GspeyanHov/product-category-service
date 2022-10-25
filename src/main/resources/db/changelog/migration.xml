@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+
+    <changeSet id="createProductAndCategoryTables" author="hgspeyan">
+        <createTable tableName="category">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="name" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createTable tableName="product">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="title" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="count" type="double">
+                <constraints nullable="false"/>
+            </column>
+            <column name="price" type="double">
+                <constraints nullable="false"/>
+            </column>
+            <column name="category_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="product" baseColumnNames="category_id" constraintName="category_product_fk" referencedTableName="product"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+    <changeSet id="dropForeignKey" author="hgspeyan">
+        <dropAllForeignKeyConstraints baseTableName="product"/>
+    </changeSet>
+    <changeSet id="createForeignKeyConstraint" author="hgspeyan">
+        <addForeignKeyConstraint baseTableName="product" baseColumnNames="category_id" constraintName="category_product_fk" referencedTableName="category"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+    
+</databaseChangeLog>
