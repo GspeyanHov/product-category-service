@@ -1,13 +1,16 @@
 package am.solidogyumri.productcategoryservice.endpoint;
 
-import am.solidogyumri.productcategoryservice.dto.CreateProductDto;
+import am.solidogyumri.productcategoryservice.dto.ProductCreateDto;
 import am.solidogyumri.productcategoryservice.dto.ProductResponseDto;
-import am.solidogyumri.productcategoryservice.dto.UpdateProductDto;
+import am.solidogyumri.productcategoryservice.dto.ProductUpdateDto;
 import am.solidogyumri.productcategoryservice.entity.Product;
 import am.solidogyumri.productcategoryservice.mapper.ProductMapper;
+import am.solidogyumri.productcategoryservice.security.CurrentUser;
 import am.solidogyumri.productcategoryservice.service.ProductService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,44 +18,59 @@ import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/products")
 public class ProductEndpoint {
 
     private final ProductService productService;
     private final ProductMapper productMapper;
 
-    @GetMapping("/product")
-    public List<ProductResponseDto> getAllProducts(){
-       return productService.getAllProducts();
+    @GetMapping()
+    public List<ProductResponseDto> getAllProducts() {
+        return productMapper.map(productService.getAllProducts());
     }
-    @GetMapping("/product/{id}")
-    public ResponseEntity<Product> getBookById(@PathVariable("id") int id) {
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Product> getProductById(@PathVariable("id") int id) {
         Optional<Product> byId = productService.findById(id);
-        if(!byId.isPresent()){
+        if (!byId.isPresent()) {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(byId.get());
     }
-    @PostMapping("/product")
-    public ResponseEntity<Product> addNewProduct(@RequestBody CreateProductDto createProductDto){
-        Product product = productService.save(productMapper.map(createProductDto));
-        return ResponseEntity.ok(product);
+
+    @PostMapping()
+    public ResponseEntity<Product> addNewProduct(@RequestBody ProductCreateDto productCreateDto) {
+        productService.save(productMapper.map(productCreateDto));
+        return ResponseEntity.ok().build();
     }
-    @PutMapping("/product")
-    public ResponseEntity<?> updateProduct(@RequestBody UpdateProductDto updateProductDto){
-        if(updateProductDto == null){
-            return ResponseEntity.badRequest().build();
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateProduct(@PathVariable("id") int id,
+                                           @AuthenticationPrincipal CurrentUser currentUser,
+                                           @RequestBody ProductUpdateDto productUpdateDto) {
+        Product product = productMapper.map(productUpdateDto);
+        if(currentUser.getUsername().equals(product.getUser().getEmail())){
+            product.setId(id);
+            return ResponseEntity.ok(productService.save(product));
         }
-        Product product = productService.save(productMapper.map(updateProductDto));
-        return ResponseEntity.ok(product);
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
-    @DeleteMapping("/product/{id}")
-    public ResponseEntity<?> deleteProductById(@PathVariable("id") int id){
-        productService.deleteById(id);
-        return ResponseEntity.noContent().build();
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteProductById(@AuthenticationPrincipal CurrentUser currentUser,
+                                               @PathVariable("id") int id) {
+        Optional<Product> byId = productService.findById(id);
+        if(currentUser.getUsername().equals(byId.get().getUser().getEmail())){
+            productService.deleteById(id);
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
-    @GetMapping("/product/byCategory/{id}")
-    public ResponseEntity<?> getProductsByCategoryId(@PathVariable("id") int id){
+
+    @GetMapping("/byCategory/{id}")
+    public ResponseEntity<?> getProductsByCategoryId(@PathVariable("id") int id) {
         List<Product> products = productService.getProducts(id);
         return ResponseEntity.ok(products);
     }
 }
+

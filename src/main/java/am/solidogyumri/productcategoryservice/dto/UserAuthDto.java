@@ -6,11 +6,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Builder
-public class CategoryUpdateDto {
+public class UserAuthDto {
 
-    private String name;
-    private UserDto user;
+    private String email;
+    private String password;
 }

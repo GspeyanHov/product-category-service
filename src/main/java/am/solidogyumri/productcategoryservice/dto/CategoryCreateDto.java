@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CategoryUpdateDto {
+public class CategoryCreateDto {
 
     private String name;
     private UserDto user;

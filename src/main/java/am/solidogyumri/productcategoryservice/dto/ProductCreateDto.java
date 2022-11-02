@@ -10,10 +10,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CreateProductDto {
+public class ProductCreateDto {
 
     private String title;
     private double count;
     private double price;
     private Category category;
+    private UserDto user;
 }

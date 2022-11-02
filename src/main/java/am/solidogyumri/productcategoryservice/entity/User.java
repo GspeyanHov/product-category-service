@@ -8,21 +8,20 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "product")
-public class Product {
+@Table(name = "user")
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private String title;
-    private double count;
-    private double price;
-    @ManyToOne
-    private Category category;
-    @ManyToOne
-    private User user;
+    @Enumerated(EnumType.STRING)
+    private Role role;
+    private String name;
+    private String surname;
+    private String email;
+    private String password;
 }

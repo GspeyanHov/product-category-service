@@ -1,7 +1,6 @@
 package am.solidogyumri.productcategoryservice.service;
 
 import am.solidogyumri.productcategoryservice.entity.Category;
-import am.solidogyumri.productcategoryservice.entity.Product;
 import am.solidogyumri.productcategoryservice.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,4 +26,6 @@ public class CategoryService {
     public void deleteById(int id) {
         categoryRepository.deleteById(id);
     }
+
+
 }

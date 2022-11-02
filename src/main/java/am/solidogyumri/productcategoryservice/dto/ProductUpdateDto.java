@@ -10,10 +10,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UpdateProductDto {
+public class ProductUpdateDto {
 
     private String title;
     private double count;
     private double price;
-    private Category category;
+    private CategoryResponseDto category;
+    private UserDto user;
 }

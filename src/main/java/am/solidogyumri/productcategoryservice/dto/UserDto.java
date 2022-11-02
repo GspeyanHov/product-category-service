@@ -1,16 +1,19 @@
 package am.solidogyumri.productcategoryservice.dto;
 
+import am.solidogyumri.productcategoryservice.entity.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Builder
-public class CategoryUpdateDto {
+public class UserDto {
 
+    private int id;
     private String name;
-    private UserDto user;
+    private String surname;
+    private String email;
 }

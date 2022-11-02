@@ -41,5 +41,46 @@
         <addForeignKeyConstraint baseTableName="product" baseColumnNames="category_id" constraintName="category_product_fk" referencedTableName="category"
                                  referencedColumnNames="id"/>
     </changeSet>
-    
+    <changeSet id="createTableUser" author="hgspeyan">
+        <createTable tableName="user">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="role" type="ENUM('ADMIN','USER')" defaultValue="USER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+             <column name="surname" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+             <column name="email" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+             <column name="password" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="addColumnUserIdToProduct" author="hgspeyan">
+        <addColumn tableName="product">
+            <column name="user_id" type="bigint">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+        <addForeignKeyConstraint baseTableName="product" baseColumnNames="user_id" constraintName="product_user_fk"
+                                 referencedTableName="user"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+    <changeSet id="addColumnUserIdToCategory" author="hgspeyan">
+        <addColumn tableName="category">
+            <column name="user_id" type="bigint">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+        <addForeignKeyConstraint baseTableName="category" baseColumnNames="user_id" constraintName="category_user_fk"
+                                 referencedTableName="user"
+                                 referencedColumnNames="id"/>
+    </changeSet>
 </databaseChangeLog>

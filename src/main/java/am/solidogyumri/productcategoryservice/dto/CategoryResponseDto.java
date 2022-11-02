@@ -1,6 +1,5 @@
 package am.solidogyumri.productcategoryservice.dto;
 
-import am.solidogyumri.productcategoryservice.entity.Category;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,4 +13,5 @@ public class CategoryResponseDto {
 
     private int id;
     private String name;
+    private UserDto user;
 }

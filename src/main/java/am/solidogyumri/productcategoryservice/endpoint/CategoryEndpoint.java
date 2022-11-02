@@ -1,13 +1,16 @@
 package am.solidogyumri.productcategoryservice.endpoint;
 
+import am.solidogyumri.productcategoryservice.dto.CategoryCreateDto;
+import am.solidogyumri.productcategoryservice.dto.CategoryResponseDto;
 import am.solidogyumri.productcategoryservice.dto.CategoryUpdateDto;
-import am.solidogyumri.productcategoryservice.dto.CreateCategoryDto;
 import am.solidogyumri.productcategoryservice.entity.Category;
-import am.solidogyumri.productcategoryservice.entity.Product;
 import am.solidogyumri.productcategoryservice.mapper.CategoryMapper;
+import am.solidogyumri.productcategoryservice.security.CurrentUser;
 import am.solidogyumri.productcategoryservice.service.CategoryService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,22 +18,21 @@ import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/categories")
 public class CategoryEndpoint {
 
     private final CategoryService categoryService;
     private final CategoryMapper categoryMapper;
-
-    @GetMapping("/category")
-    public List<Category> getAllCategories() {
-        return categoryService.findAllCategories();
+    @GetMapping()
+    public List<CategoryResponseDto> getAllCategories() {
+        return categoryMapper.map(categoryService.findAllCategories());
     }
-
-    @PostMapping("/category")
-    public ResponseEntity <Category> addNewCategory(@RequestBody CreateCategoryDto createCategoryDto) {
-        Category category = categoryService.createCategory(categoryMapper.map(createCategoryDto));
-        return ResponseEntity.ok(category);
+    @PostMapping()
+    public ResponseEntity<Category> addNewCategory(@RequestBody CategoryCreateDto categoryCreateDto) {
+        categoryService.createCategory(categoryMapper.map(categoryCreateDto));
+        return ResponseEntity.ok().build();
     }
-    @GetMapping("/category/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<Category> getCategoryById(@PathVariable("id") int id) {
         Optional<Category> byId = categoryService.findById(id);
         if(!byId.isPresent()){
@@ -38,17 +40,25 @@ public class CategoryEndpoint {
         }
         return ResponseEntity.ok(byId.get());
     }
-    @PutMapping("/category")
-    public ResponseEntity<?> updateCategory(@RequestBody CategoryUpdateDto categoryUpdateDto){
-        if(categoryUpdateDto == null){
-            return ResponseEntity.badRequest().build();
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateCategory(@PathVariable("id") int id,
+                                            @AuthenticationPrincipal CurrentUser currentUser,
+                                            @RequestBody CategoryUpdateDto categoryUpdateDto) {
+        Category category = categoryMapper.map(categoryUpdateDto);
+        if(currentUser.getUsername().equals(category.getUser().getEmail())) {
+            category.setId(id);
+            return ResponseEntity.ok(categoryService.createCategory(category));
         }
-        Category category = categoryService.createCategory(categoryMapper.map(categoryUpdateDto));
-        return ResponseEntity.ok(category);
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
-    @DeleteMapping("/category/{id}")
-    public ResponseEntity<?> deleteCategoryById(@PathVariable("id") int id){
-        categoryService.deleteById(id);
-        return ResponseEntity.noContent().build();
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteCategoryById(@PathVariable("id") int id,
+                                                @AuthenticationPrincipal CurrentUser currentUser) {
+        Optional<Category> byId = categoryService.findById(id);
+        if(currentUser.getUsername().equals(byId.get().getUser().getEmail())) {
+            categoryService.deleteById(id);
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 }
