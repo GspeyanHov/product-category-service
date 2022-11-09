@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 
 @Data
 @NoArgsConstructor
@@ -24,4 +25,8 @@ public class User {
     private String surname;
     private String email;
     private String password;
+
+    public <E> User(String s, String foo, ArrayList<E> es) {
+
+    }
 }

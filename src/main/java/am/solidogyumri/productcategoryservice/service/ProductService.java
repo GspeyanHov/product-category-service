@@ -18,6 +18,9 @@ public class ProductService {
     }
 
     public Product save(Product product){
+        if(product == null){
+            throw new RuntimeException("book can not be null");
+        }
         return productRepository.save(product);
     }
 

@@ -18,6 +18,9 @@ public class CategoryService {
         return categoryRepository.findAll();
     }
     public Category createCategory(Category category){
+        if (category == null) {
+            throw new RuntimeException("category can not be null");
+        }
         return categoryRepository.save(category);
     }
     public Optional<Category> findById(int id) {
@@ -26,6 +29,4 @@ public class CategoryService {
     public void deleteById(int id) {
         categoryRepository.deleteById(id);
     }
-
-
 }

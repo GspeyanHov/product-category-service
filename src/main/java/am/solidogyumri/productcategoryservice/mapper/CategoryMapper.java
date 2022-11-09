@@ -15,4 +15,6 @@ public interface CategoryMapper {
     Category map(CategoryCreateDto categoryCreateDto);
 
     Category map(CategoryUpdateDto categoryUpdateDto);
+
+    CategoryCreateDto map (Category category);
 }

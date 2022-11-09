@@ -39,9 +39,9 @@ public class ProductEndpoint {
     }
 
     @PostMapping()
-    public ResponseEntity<Product> addNewProduct(@RequestBody ProductCreateDto productCreateDto) {
-        productService.save(productMapper.map(productCreateDto));
-        return ResponseEntity.ok().build();
+    public ResponseEntity<?> addNewProduct(@RequestBody ProductCreateDto productCreateDto) {
+        Product product = productMapper.map(productCreateDto);
+        return ResponseEntity.ok(productService.save(product));
     }
 
     @PutMapping("/{id}")

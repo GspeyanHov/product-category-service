@@ -18,6 +18,9 @@ public class UserService {
     }
 
     public User save(User user) {
+        if(user == null){
+            throw new RuntimeException("user already exist");
+        }
         return userRepository.save(user);
     }
 }

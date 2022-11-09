@@ -28,9 +28,11 @@ public class CategoryEndpoint {
         return categoryMapper.map(categoryService.findAllCategories());
     }
     @PostMapping()
-    public ResponseEntity<Category> addNewCategory(@RequestBody CategoryCreateDto categoryCreateDto) {
-        categoryService.createCategory(categoryMapper.map(categoryCreateDto));
-        return ResponseEntity.ok().build();
+    public ResponseEntity<CategoryCreateDto> addNewCategory(@RequestBody Category category) {
+        CategoryCreateDto dto = categoryMapper.map(categoryService.createCategory(category));
+        return ResponseEntity.ok(dto);
+
+
     }
     @GetMapping("/{id}")
     public ResponseEntity<Category> getCategoryById(@PathVariable("id") int id) {
